@@ -2,7 +2,7 @@ package com.arxict.aoc2021
 
 
 class Day04(val lines: List<String>) {
-    private val numbers = lines.first().split(",").map(String::toInt)
+    private val numbers = lines.numbers()
     private fun mutableBoards() = ((1 + separatorLines)..lines.size step (boardRows + separatorLines))
         .map {
             Board(lines.subList(it, it + boardRows))
