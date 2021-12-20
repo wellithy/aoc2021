@@ -10,10 +10,11 @@ class Day06(val lines: List<Int>) {
         class State(lines: List<Int>) {
             val frequency = Array<BigInteger>(states) { BigInteger.ZERO }.apply { lines.forEach { this[it]++ } }
 
-            fun advance() {
-                frequency.rotate()
-                frequency[restart] += frequency.last()
-            }
+            fun advance(days: Int = 1) =
+                repeat(days) {
+                    frequency.rotate()
+                    frequency[restart] += frequency.last()
+                }
 
             fun list(): List<Int> =
                 frequency.flatMapIndexed { index, count -> MutableList(count.intValueExact()) { index } }
@@ -32,8 +33,8 @@ class Day06(val lines: List<Int>) {
         }
 
     fun size(days: Int): BigInteger =
-        State(lines).let { state ->
-            repeat(days) { state.advance() }
-            state.size
+        State(lines).let {
+            it.advance(days)
+            it.size
         }
 }
