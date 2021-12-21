@@ -24,7 +24,7 @@ class Day03(val lines: List<String>) {
     }.power()
 
     private tailrec fun List<String>.calculate(oxygen: Boolean, index: Int = 0): Long =
-        if (size == 1) first().toLong(2)
+        if (size == 1) single().toLong(2)
         else partition { it[index] == '1' }.select(oxygen).calculate(oxygen, index + 1)
 
     fun part2(): Long =
