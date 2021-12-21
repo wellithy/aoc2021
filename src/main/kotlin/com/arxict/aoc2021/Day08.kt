@@ -18,50 +18,36 @@ class Day08(val lines: List<String>) {
 
         fun Entry.uniqueLengths(): Int = output.count { it.size in uniqueLengths }
 
-        fun MutableMap<SDD, Char>.putSingle(list: List<SDD>, value: Char): SDD =
-            list.single().also { require(put(it, value) == null) }
-
-        fun MutableMap<SDD, Char>.putSingles(
-            patterns: List<SDD>,
-            first: Char, second: Char, third: Char, size: Int,
-            par1: SDD, size1: Int,
-            par2: SDD, size2: Int,
-        ) =
-            patterns.filter { it.size == size }
-                .partition { (it subtract par1).size == size1 }
-                .let { p1 ->
-                    putSingle(p1.first, first)
-                    p1.second.partition { (it subtract par2).size == size2 }.let { p2 ->
-                        putSingle(p2.first, second)
-                        putSingle(p2.second, third)
-                    }
-                }
-
-        fun MutableMap<SDD, Char>.unique(patterns: List<SDD>, size: Int, value: Char): SDD =
-            putSingle(patterns.filter { it.size == size }, value)
-
+        fun SDD.intersectSize(other: SDD): Int = count { it in other }
 
         fun Entry.number(): Int =
-            buildMap {
-                val one = unique(patterns, 2, '1')  // 1 = cf (2)
-                val four = unique(patterns, 4, '4')  // 4 = bcdf (4)
-                unique(patterns, 3, '7')  // 7 = acf (3)
-                val eight = unique(patterns, 7, '8')  // 8 = abcdefg (7)
-                val aeg = eight subtract four // 8 - 4 = aeg
-                putSingles(
-                    patterns,
-                    '2', '3', '5', 5, // 2 | 3 | 5 = acdeg | acdfg | abdfg (5)
-                    aeg, 2, // 2 | 3 | 5 - aeg = cd | cdf | bdf
-                    one, 3, //  3 | 5 - cf = adg | abdg
-                )
-                putSingles(
-                    patterns,
-                    '9', '0', '6', 6,  // 0 | 6 | 9 = abcefg | abdefg | abcdfg (6)
-                    aeg, 4, // 0 | 6 | 9 - aeg = bcf | bdf | bcdf
-                    one, 4, //  0 | 6 - cf = abeg | abdeg
-                )
-            }.let { map ->
-                output.map { map[it] }.joinToString("").toInt()
+            arrayOfNulls<SDD>(10).apply {
+                patterns.forEach {
+                    when (it.size) {
+                        2 -> this[1] = it  // 1 = cf (2)
+                        4 -> this[4] = it  // 4 = bcdf (4)
+                        3 -> this[7] = it // 7 = acf (3)
+                        7 -> this[8] = it   // 8 = abcdefg (7)
+                    }
+                }
+                val cf = this[1]!!
+                val bd = this[4]!! - cf // bcdf - cf
+                patterns.forEach {
+                    when (it.size) {
+                        5 -> when { // 2 | 3 | 5 = acdeg | acdfg | abdfg (5)
+                            cf.intersectSize(it) == 2 -> this[3] = it // 2 | 3 | 5 X cf = c | cf | f
+                            bd.intersectSize(it) == 2 -> this[5] = it // 2 | 3 | 5 X bd = d | d | bd
+                            else -> this[2] = it
+                        }
+                        6 -> when { // 0 | 6 | 9 = abcefg | abdefg | abcdfg (6)
+                            cf.intersectSize(it) == 1 -> this[6] = it // 0 | 6 | 9 X cf = cf | f | cf
+                            bd.intersectSize(it) == 1 -> this[0] = it // 0 | 6 | 9 X bd = b | bd | bd
+                            else -> this[9] = it
+                        }
+                    }
+                }
+            }.let { array ->
+                output.map(array::indexOf).joinToString("").toInt()
             }
     }
 
