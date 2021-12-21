@@ -5,13 +5,12 @@ import kotlin.math.absoluteValue
 class Day07(val numbers: List<Int>) {
 
     private companion object {
-        class Trial(numbers: List<Int>, val weight: (Int) -> Int) {
+        class Trial(val numbers: List<Int>, val weight: (Int) -> Int) {
             val frequency = numbers.groupingBy { it }.eachCount()
 
             fun solve(): Int {
-                val keys = frequency.keys.sorted()
-                var max = keys.last()
-                var min = keys.first()
+                var min = numbers.minOf { it }
+                var max = numbers.maxOf { it }
                 while (max > min) {
                     val mid = (min + max) / 2
                     val cost = cost(mid)
