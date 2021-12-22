@@ -1,8 +1,9 @@
 package com.arxict.aoc2021
 
+import java.util.concurrent.atomic.AtomicInteger
+
 private typealias Node = String
 private typealias Graph = Map<Node, Set<Node>>
-private typealias Path = List<Node>
 
 class Day12(val lines: List<String>) {
 
@@ -10,9 +11,15 @@ class Day12(val lines: List<String>) {
         const val START: Node = "start"
         const val END: Node = "end"
 
-        fun Graph(lines: List<String>, delimiter: Char = '-'): Graph = buildMap<Node, MutableSet<Node>> {
-            fun Node.connect(to: Node) =
-                getOrPut(this) { mutableSetOf() }.add(to)
+        fun Graph(
+            lines: List<String>,
+            delimiter: Char = '-'
+        ): Graph = buildMap<Node, MutableSet<Node>>
+        {
+            fun Node.connect(to: Node) {
+                if (this != END && to != START)
+                    getOrPut(this) { mutableSetOf() }.add(to)
+            }
             lines.forEach {
                 it.split(delimiter).let { (n1, n2) ->
                     n1.connect(n2)
@@ -21,28 +28,23 @@ class Day12(val lines: List<String>) {
             }
         }
 
-        fun Graph.paths(): List<Path> {
+        val Node.oneVisit: Boolean get() = first().isLowerCase()
+
+        fun Graph.paths(): Int {
             val visited = mutableSetOf<Node>()
-            val current = ArrayDeque<Node>()
-            fun dfs(node: Node, paths: MutableList<Path>): List<Path> {
-                if (node.first().isLowerCase() && !visited.add(node)) return paths
-                current.addLast(node)
-                if (node == END) {
-                    paths += current.toList()
-                    visited -= node
-                    current.removeLast()
-                    return paths
-                }
-                this[node]?.forEach { dfs(it, paths) }
-                visited -= node
-                current.removeLast()
-                return paths
+            val paths = AtomicInteger()
+            fun dfs(node: Node) {
+                if (node.oneVisit && !visited.add(node)) return
+                if (node == END) paths.incrementAndGet()
+                this[node]?.forEach { dfs(it) }
+                if (node.oneVisit) visited -= node
             }
-            return dfs(START, mutableListOf())
+            dfs(START)
+            return paths.get()
         }
     }
 
     fun part1(): Int =
-        Graph(lines).paths().size
+        Graph(lines).paths()
 
 }
