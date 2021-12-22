@@ -11,3 +11,6 @@ fun lines(name: String): List<String> =
 fun sample(name: String): List<String> =
     lines("${name}_sample")
 
+fun List<String>.nums(): List<List<Int>> =
+    map { it.map(Char::digitToInt).toList() }
+

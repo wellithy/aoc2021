@@ -3,12 +3,6 @@ package com.arxict.aoc2021
 import kotlin.test.*
 
 class Day09Test {
-    private companion object {
-        fun List<String>.nums(): List<List<Int>> =
-            map { it.map(Char::digitToInt).toList() }
-    }
-
-
     @Test
     fun sample() = Day09(sample("09").nums()).let {
         assertEquals(15, it.part1())
