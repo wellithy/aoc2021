@@ -6,13 +6,14 @@ class Day11Test {
 
     @Test
     @Ignore
-    fun small() = Day11(lines("11_small").nums()).let {
+    fun small() = Day11(sample("11", "1").nums()).let {
         assertEquals(9, it.sample())
-        assertEquals(0, it.part2())
+        assertEquals(259, it.part1())
+        assertEquals(6, it.part2())
     }
 
     @Test
-    fun sample() = Day11(sample("11").nums()).let {
+    fun sample() = Day11(sample("11", "2").nums()).let {
         assertEquals(1_656, it.part1())
         assertEquals(195, it.part2())
     }

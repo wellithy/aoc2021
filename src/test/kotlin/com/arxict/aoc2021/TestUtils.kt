@@ -8,8 +8,8 @@ val dataDir: File =
 fun lines(name: String): List<String> =
     File(dataDir, "Day${name}.txt").readLines()
 
-fun sample(name: String): List<String> =
-    lines("${name}_sample")
+fun sample(name: String, suffix:String=""): List<String> =
+    lines("${name}_sample$suffix")
 
 fun List<String>.nums(): List<List<Int>> =
     map { it.map(Char::digitToInt).toList() }
