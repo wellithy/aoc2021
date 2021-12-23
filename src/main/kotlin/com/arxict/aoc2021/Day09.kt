@@ -9,25 +9,25 @@ class Day09(val numbers: List<List<Int>>) {
     private fun Int.test(i: Int, j: Int): Boolean =
         i !in 0..bottom || j !in 0..right || this < numbers[i][j]
 
-    private fun loop(action: (Int, Int) -> Unit) =
+    private fun loop(action: (Cell) -> Unit) =
         numbers.forEachIndexed { i, row ->
             row.forEachIndexed { j, cell ->
                 cell.apply {
                     if (this < 9 && test(i, j - 1) && test(i, j + 1) && test(i - 1, j) && test(i + 1, j))
-                        action(i, j)
+                        action(i to j)
                 }
             }
         }
 
     fun part1(): Int {
         var risk = 0
-        loop { i, j -> risk += numbers[i][j].inc() }
+        loop { risk += numbers[it]!!.inc() }
         return risk
     }
 
-    private fun basin(i: Int, j: Int): Int {
-        val visited = mutableSetOf<Point>()
-        val stack = ArrayDeque<Point>().apply { addFirst(i to j) }
+    private fun basin(cell: Cell): Int {
+        val visited = mutableSetOf<Cell>()
+        val stack = ArrayDeque<Cell>().apply { addFirst(cell) }
 
         fun Int.test(x: Int, y: Int) {
             if (x in 0..bottom && y in 0..right && numbers[x][y] in inc()..8)
@@ -51,9 +51,8 @@ class Day09(val numbers: List<List<Int>>) {
     fun part2(): Int {
         val max = 3
         val queue = PriorityQueue<Int>(max.inc())
-        loop { i, j ->
-            queue.apply {
-                add(basin(i, j))
+        loop { queue.apply {
+                add(basin(it))
                 if (size > max) poll()
             }
         }

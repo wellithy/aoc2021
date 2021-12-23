@@ -9,13 +9,12 @@ class Day10(val lines: List<String>) {
         val closing = mapOf('(' to ')', '[' to ']', '{' to '}', '<' to '>')
         val cost = mapOf<Char,Long>(')' to 3, ']' to 57, '}' to 1_197, '>' to 25_137)
         val value = mapOf<Char,Long>('(' to 1, '[' to 2, '{' to 3, '<' to 4)
-        val open = closing.keys.joinToString("")
     }
 
     private fun String.value(expense: Boolean): Long? {
         val stack = ArrayDeque<Char>()
         forEach {
-            if (it in open) stack.addFirst(it)
+            if (it in closing.keys) stack.addFirst(it)
             else if (it != closing[stack.pollFirst()])
                 return if (expense) null else cost[it]!!
         }

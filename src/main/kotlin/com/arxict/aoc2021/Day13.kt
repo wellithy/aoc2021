@@ -4,7 +4,7 @@ class Day13(val lines: List<String>) {
 
     private companion object {
         data class Fold(val horizontal: Boolean, val amount: Int)
-        class Instruction(val paper: Set<Point>, val corner: Point, val fold: List<Fold>)
+        class Instruction(val paper: Set<Cell>, val corner: Cell, val fold: List<Fold>)
 
         fun Instruction.display(): String =
             Array(corner.second.inc()) { CharArray(corner.first.inc()) { '.' } }.let { mesh ->
@@ -15,13 +15,13 @@ class Day13(val lines: List<String>) {
         val Instruction.dots: Int get() = paper.size
 
         fun Instruction(lines: List<String>): Instruction {
-            val paper = mutableSetOf<Point>()
+            val paper = mutableSetOf<Cell>()
             val fold = mutableListOf<Fold>()
             lines.forEach { line ->
-                line.split(',').takeIf { it.size == 2 }?.let { paper += Point(it[0].toInt(), it[1].toInt()) }
+                line.split(',').takeIf { it.size == 2 }?.let { paper += Cell(it[0].toInt(), it[1].toInt()) }
                 line.split('=').takeIf { it.size == 2 }?.let { fold += Fold(it[0].last() == 'y', it[1].toInt()) }
             }
-            val corner = Point(paper.maxOf(Point::first), paper.maxOf(Point::second))
+            val corner = Cell(paper.maxOf(Cell::first), paper.maxOf(Cell::second))
             return Instruction(paper, corner, fold)
         }
                 fun Instruction.fold(): Instruction {

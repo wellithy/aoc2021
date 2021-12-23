@@ -6,7 +6,7 @@ class Day07(val numbers: List<Int>) {
 
     private companion object {
         class Trial(val numbers: List<Int>, val weight: (Int) -> Int) {
-            val frequency = numbers.groupingBy { it }.eachCount()
+            val frequency = numbers.frequency()
 
             fun solve(): Int {
                 var min = numbers.minOf { it }

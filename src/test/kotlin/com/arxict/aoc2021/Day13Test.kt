@@ -5,7 +5,7 @@ import kotlin.test.*
 class Day13Test {
 
     @Test
-    fun sample1() = Day13(sample("13")).let {
+    fun sample() = Day13(sample("13")).let {
         assertEquals(17, it.part1())
         val zero = """
             #####
