@@ -2,8 +2,6 @@ package com.arxict.aoc2021
 
 import java.util.*
 
-private typealias Point = Pair<Int, Int>
-
 class Day09(val numbers: List<List<Int>>) {
     private val bottom = numbers.lastIndex
     private val right = numbers.first().lastIndex
