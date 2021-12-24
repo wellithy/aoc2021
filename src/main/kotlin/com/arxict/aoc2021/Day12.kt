@@ -1,7 +1,5 @@
 package com.arxict.aoc2021
 
-import java.util.concurrent.atomic.AtomicInteger
-
 private typealias Node = String
 private typealias Graph = Map<Node, Set<Node>>
 
@@ -11,19 +9,15 @@ class Day12(val lines: List<String>) {
         const val START: Node = "start"
         const val END: Node = "end"
 
-        fun Graph(
-            lines: List<String>,
-            delimiter: Char = '-'
-        ): Graph = buildMap<Node, MutableSet<Node>>
-        {
+        fun Graph(lines: List<String>): Graph = buildMap<Node, MutableSet<Node>> {
             fun Node.connect(to: Node) {
                 if (this != END && to != START)
-                    getOrPut(this) { mutableSetOf() }.add(to)
+                    getOrPut(this) { mutableSetOf() } += to
             }
             lines.forEach {
-                it.split(delimiter).let { (n1, n2) ->
-                    n1.connect(n2)
-                    n2.connect(n1)
+                it.split('-').apply {
+                    first().connect(last())
+                    last().connect(first())
                 }
             }
         }
@@ -32,15 +26,16 @@ class Day12(val lines: List<String>) {
 
         fun Graph.paths(): Int {
             val visited = mutableSetOf<Node>()
-            val paths = AtomicInteger()
+            var count = 0
             fun dfs(node: Node) {
-                if (node.oneVisit && !visited.add(node)) return
-                if (node == END) paths.incrementAndGet()
-                this[node]?.forEach { dfs(it) }
-                if (node.oneVisit) visited -= node
+                if (!node.oneVisit || visited.add(node)) {
+                    if (node == END) count++
+                    else this[node]?.forEach(::dfs)
+                    visited -= node
+                }
             }
             dfs(START)
-            return paths.get()
+            return count
         }
     }
 

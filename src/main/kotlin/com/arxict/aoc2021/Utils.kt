@@ -24,3 +24,10 @@ fun <T> Array<T>.rotate() {
     this.copyInto(this, startIndex = 1)
     this[lastIndex] = first
 }
+
+fun <T> Iterable<T>.intersectSize(other: Iterable<T>): Int =
+    count { it in other }
+
+fun <T> Iterable<T>.toInt(): Int =
+    joinToString("").toInt()
+
